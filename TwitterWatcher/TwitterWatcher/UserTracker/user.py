@@ -1,11 +1,17 @@
-from tweepy import StreamListener, models, API
+from tweepy import StreamListener, models, API, Stream
 from TwitterWatcher.Database import Database
-
+import time
 
 class UserStreamListener(StreamListener):
-		def __init__(self, api: API):
+		def __init__(self, api: API, time_limit=60):
 				super().__init__(api=api)
 				self._db = Database()
+
+				self.start_time = time.time()
+				self.limit = time_limit
+				self.tweets_reply = []
+				self.tweets = []
+				self.capacity = 10
 
 
 		def on_error(self, status_code):
@@ -13,10 +19,21 @@ class UserStreamListener(StreamListener):
 
 
 		def on_status(self, status):
-				if status._json.get('in_reply_to_status_id_str', None):
-						self._handle_reply(status)
-				else:
-						self._handle_status(status)
+			if(time.time() - self.start_time) < self.limit:
+				if(status.in_reply_to_status_id == None and len(self.tweets) < self.capacity): #If a reply
+					self.tweets.append((status.id_str, status.text))
+					#print("original tweet: ", status.id_str, status.text)
+					self._db.insert_tweet(status)
+				
+				elif(status.in_reply_to_status_id != None): #If 
+					self.tweets_reply.append(((status.id_str, status.text)))
+					#print("reply: ", status.id_str, status.text, status.in_reply_to_status_id_str)
+					self._db.insert_reply(status)
+					
+				return True
+		
+			else:
+				return False
 
 
 		def on_delete(self, status_id, user_id):
