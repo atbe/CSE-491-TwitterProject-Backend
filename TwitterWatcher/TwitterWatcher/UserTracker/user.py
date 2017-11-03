@@ -3,7 +3,7 @@ from TwitterWatcher.Database import Database
 import time
 
 class UserStreamListener(StreamListener):
-		def __init__(self, api: API, time_limit=180):
+		def __init__(self, api: API, time_limit=999):
 				super().__init__(api=api)
 				self._db = Database()
 

@@ -18,10 +18,10 @@ class TwitterUserTracker(object):
 						auth=self._client.auth,
 						listener=self._userStreamListener
 				)
-				stream.userstream(
-						_with=self._username,
-						replies='all',
-						stall_warnings=True
-				)
-				#stream.filter(follow=["1170568604"])
+				#stream.userstream(
+				#		_with=self._username,
+				#		replies='all',
+				#		stall_warnings=True
+				#)
+				stream.filter(async=True, follow=["1170568604"])
 
