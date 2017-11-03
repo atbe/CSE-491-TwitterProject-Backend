@@ -23,5 +23,5 @@ class TwitterUserTracker(object):
 				#		replies='all',
 				#		stall_warnings=True
 				#)
-				stream.filter(async=True, follow=["1170568604"])
+				stream.filter(async=True, follow=["@WhiplashSnidley"])
 
