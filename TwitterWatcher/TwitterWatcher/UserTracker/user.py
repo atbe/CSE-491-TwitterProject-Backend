@@ -3,7 +3,7 @@ from TwitterWatcher.Database import Database
 import time
 
 class UserStreamListener(StreamListener):
-		def __init__(self, api: API, time_limit=60):
+		def __init__(self, api: API, time_limit=180):
 				super().__init__(api=api)
 				self._db = Database()
 
@@ -25,7 +25,7 @@ class UserStreamListener(StreamListener):
 					#print("original tweet: ", status.id_str, status.text)
 					self._db.insert_tweet(status)
 				
-				elif(status.in_reply_to_status_id != None): #If 
+				elif(status.in_reply_to_status_id != None): 
 					self.tweets_reply.append(((status.id_str, status.text)))
 					#print("reply: ", status.id_str, status.text, status.in_reply_to_status_id_str)
 					self._db.insert_reply(status)
