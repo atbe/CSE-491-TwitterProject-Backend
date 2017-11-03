@@ -6,22 +6,43 @@ const languageClient = new language.LanguageServiceClient();
 exports.processReplySentiment = functions.firestore
   .document('replies/{replyId}')
   .onCreate((event) => {
-    var reply = event.data.data();
+    let reply = event.data.data();
 
-    var replyText = reply.text;
-    console.log(replyText)
+    let replyText = reply.text;
 
-    var document = {
+    let document = {
       content: replyText,
       type: 'PLAIN_TEXT'
     };
 
-    var sentiment = languageClient.analyzeSentiment({document: document}).then(
-      (results) => {
-        const sentiment = results[0].documentSentiment;
-        console.log(`Text: ${replyText}`);
-        console.log(`Sentiment score: ${sentiment.score}`);
-        console.log(`Sentiment magnitude: ${sentiment.magnitude}`);
-      }
-    );
-});
+      languageClient.analyzeSentiment({document: document}).then(
+          (results) => {
+              const sentiment = results[0].documentSentiment;
+
+              const sentimentRef = functions.firestore.document(`sentiment/${reply.id}`);
+              sentimentRef.get().then(
+                  (docSnapshot) => {
+                      if (docSnapshot.exists) {
+                          count = docSnapshot.child('count');
+                          totalScore = docSnapshot.child('score') * count;
+                          count++;
+                          score = (score + sentiment.score) / count;
+                          sentimentRef.set({
+                              count: count,
+                              score: score
+                          });
+                      } else {
+                          sentimentRef.set({
+                              count: 1,
+                              score: sentiment.score
+                          });
+                      }
+                  }
+              )
+          },
+          (err) => {
+              console.error('Unhandled error occurred while querying for sentiment');
+              console.error(err);
+          }
+      );
+  });
