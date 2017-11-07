@@ -1,10 +1,11 @@
 from google.cloud import firestore
 from tweepy import models
+from json import dumps
 
 class Database(object):
 
 		def __init__(self):
-				self._db: firestore.Client = firestore.Client()
+				self._db: firestore.Client = firestore.Client(project='twittertweettracker')
 
 		def insert_tweet(self, status):
 				doc_ref: firestore.DocumentReference = self._db.collection('tweets').document(str(status._json['id']))

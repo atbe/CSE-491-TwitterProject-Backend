@@ -12,4 +12,4 @@ class Client(API):
 						environ['TWITTER_ACCESS_KEY'],
 						environ['TWITTER_ACCESS_TOKEN']
 				)
-				self.api = super().__init__(auth_handler=self.auth)
+				super().__init__(auth_handler=self.auth)

@@ -9,7 +9,8 @@ class TwitterUserTracker(object):
 				self._username: str = username
 				self._client: Client = client
 				self._userStreamListener: UserStreamListener = UserStreamListener(
-						api=self._client.api
+						api=self._client,
+						username=username
 				)
 
 
@@ -18,8 +19,7 @@ class TwitterUserTracker(object):
 						auth=self._client.auth,
 						listener=self._userStreamListener
 				)
-				stream.userstream(
-						_with=self._username,
-						replies='all',
+				stream.filter(
+						follow=[self._client.lookup_users(screen_names=[self._username])[0].id_str],
 						stall_warnings=True
 				)
