@@ -1,6 +1,8 @@
 from TwitterWatcher import Client
 from TwitterWatcher.UserTracker import UserStreamListener
 from tweepy import Stream
+from TwitterWatcher.logger import Logger
+import time
 
 class TwitterUserTracker(object):
 
@@ -15,11 +17,19 @@ class TwitterUserTracker(object):
 
 
 		def begin_tracking(self) -> None:
-				stream = Stream(
-						auth=self._client.auth,
-						listener=self._userStreamListener
-				)
-				stream.filter(
-						follow=[self._client.lookup_users(screen_names=[self._username])[0].id_str],
-						stall_warnings=True
-				)
+				while True:
+						try:
+								stream = Stream(
+										auth=self._client.auth,
+										listener=self._userStreamListener
+								)
+								stream.filter(
+										follow=[self._client.lookup_users(screen_names=[self._username])[0].id_str],
+										stall_warnings=True,
+										async=False
+								)
+						except Exception as e:
+								Logger.error('Error occured during stream loop, restarting in 5 sec')
+								Logger.exception(e)
+								time.sleep(5)
+								continue
