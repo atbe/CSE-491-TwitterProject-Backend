@@ -13,7 +13,6 @@ logger.addHandler(consoleLogger)
 class UserStreamListener(StreamListener):
 		def __init__(self, api: API, username: str):
 				super().__init__(api=api)
-				self._db = Database()
 				self._username = username
 
 
@@ -49,8 +48,8 @@ class UserStreamListener(StreamListener):
 
 
 		def _handle_reply(self, status) -> None:
-				self._db.insert_reply(status)
+				Database().insert_reply(status)
 
 
 		def _handle_status(self, status: models.Status):
-				self._db.insert_tweet(status)
+				Database().insert_tweet(status)
