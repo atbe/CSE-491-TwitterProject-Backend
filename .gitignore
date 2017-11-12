@@ -5,4 +5,9 @@ env
 
 *.egg-info
 
-node_modules/
+functions/functions/**/*.js
+functions/functions/**/*.map
+
+functions/functions/dist
+
+functions/functions/node_modules

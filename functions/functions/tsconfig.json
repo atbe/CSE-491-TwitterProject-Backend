@@ -3,14 +3,16 @@
     "lib": ["es6", "es2015.promise"],
     "module": "commonjs",
     "noImplicitAny": false,
-    "outDir": "./",
+    "outDir": "./dist",
     "sourceMap": true,
     "target": "es6",
     "allowJs": true
   },
   "include": [
-    "src/**/*.ts",
-    "spec/**/*.ts"
+    "src/**.ts",
+    "src/spec/**.spec.ts"
   ],
-  "exclude": []
+  "exclude": [
+    "node_modules"
+  ]
 }
