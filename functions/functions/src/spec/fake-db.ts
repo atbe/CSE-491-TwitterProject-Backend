@@ -29,6 +29,13 @@ export function remove(path: string): Promise<void> {
     return Promise.resolve();
 }
 
+export async function transaction(path: string, callback): Promise<any> {
+    const data = path in _values ? _values[path] : null;
+    const newData = await callback(data);
+    _values[path] = newData;
+    return Promise.resolve();
+}
+
 export function values() {
     return _values;
 }

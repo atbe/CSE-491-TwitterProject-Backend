@@ -15,18 +15,36 @@
  */
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import * as firebase from "firebase";
+import Transaction = firebase.firestore.Transaction;
 admin.initializeApp(functions.config().firebase);
 
-export function get(path: string): Promise<any> {
-  return new admin.firestore.Firestore().doc(path).get().then((document: any) => {
-    return document;
-  });
+export function get(path: string): Promise<any | null> {
+    return new admin.firestore.Firestore().doc(path).get().then((document: any) => {
+        return document.exists ? document.data() : null;
+    });
 }
 
 export function set(path: string, value: any): Promise<any> {
-  return new admin.firestore.Firestore().doc(path).set(value)
+    return new admin.firestore.Firestore().doc(path).set(value)
 }
 
 export function remove(path: string): Promise<any> {
-  return new admin.firestore.Firestore().doc(path).delete();
+    return new admin.firestore.Firestore().doc(path).delete();
+}
+
+export async function transaction(path: string, callback): Promise<any> {
+    const db = new admin.firestore.Firestore();
+    const ref = db.doc(path);
+    const doc = await ref.get();
+    const data = doc.exists ? doc.data() : null;
+    return db.runTransaction(async (tran: any) => {
+        const newData = await callback(data);
+        if (data) {
+            tran.update(ref, newData);
+        } else {
+            tran.set(ref, newData);
+        }
+        Promise.resolve();
+    });
 }
