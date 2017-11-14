@@ -4,6 +4,8 @@ env
 *.idea/
 *__pycache__/
 
+npm-debug.log
+
 *.egg-info
 
 functions/functions/**/*.js
