@@ -41,8 +41,8 @@ class UserStreamListener(StreamListener):
 
 
 		def _handle_reply(self, status) -> None:
-				self._db.insert_reply(status)
+				Database().insert_reply(status)
 
 
 		def _handle_status(self, status: models.Status):
-				self._db.insert_tweet(status)
+				Database().insert_tweet(status)
