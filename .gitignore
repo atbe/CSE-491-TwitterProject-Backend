@@ -1,8 +1,16 @@
 env
+.env
 
 *.idea/
 *__pycache__/
 
+npm-debug.log
+
 *.egg-info
 
-node_modules/
+functions/functions/**/*.js
+functions/functions/**/*.map
+functions/functions/dist
+functions/functions/node_modules
+
+TwitterTweetTracker-93ade215aff3.json

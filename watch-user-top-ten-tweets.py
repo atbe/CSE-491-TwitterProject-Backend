@@ -3,7 +3,7 @@ from TwitterWatcher import TwitterUserTracker
 
 def main():
 	client: Client = Client()
-	tracker = TwitterUserTracker('dse-msu', client)
+	tracker = TwitterUserTracker(input("Username to track: "), client)
 	tracker.begin_tracking()
 
 if __name__ == '__main__':
