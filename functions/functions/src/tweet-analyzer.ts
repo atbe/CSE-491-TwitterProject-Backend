@@ -1,10 +1,9 @@
-import { TweetSentiment } from './models/tweet-sentiment';
+import { TweetSentiment } from './models/sentiment';
 import * as db from './db';
-import {Tweet} from "./models/tweet";
+import { Hashtag, Tweet } from "./models/twitter/tweet";
 import * as sentiment from "./sentiment";
 import * as firebase from "firebase";
-import DocumentReference = firebase.firestore.DocumentReference;
-import Transaction = firebase.firestore.Transaction;
+import { HashtagCounter } from './models/hashtagCounter';
 
 export async function updateSentiment(tweet: Tweet): Promise<void> {
     const replySentiment = await sentiment.getSentiment({
@@ -25,4 +24,19 @@ export async function updateSentiment(tweet: Tweet): Promise<void> {
         }
         return Promise.resolve(tweetSentiment);
     });
+}
+
+export async function countHashtags(tweet: Tweet): Promise<void> {
+	tweet.entities.hashtags.forEach(async (hashtag: Hashtag, index: number) => {
+		const path = `hashtags/${tweet.in_reply_to_status_id_str}/${hashtag.text}`;
+		await db.transaction(path,async (hashtagCounter: HashtagCounter): Promise<HashtagCounter> => {
+			if (hashtagCounter) {
+				hashtagCounter.count += 1;
+			} else {
+				hashtagCounter = { count: 1 };
+			}
+			return Promise.resolve(hashtagCounter);
+		});
+	});
+	return Promise.resolve();
 }

@@ -29,7 +29,7 @@ fakeadmin.init();
 
 // Ready to go!
 import * as tweetAnalyzer from '../tweet-analyzer';
-import { Entities, Tweet } from "../models/tweet";
+import { Entities, Tweet } from "../models/twitter/tweet";
 
 // Some test input data that we'll use in multiple tests.
 const tweet: Tweet = {
@@ -90,16 +90,22 @@ describe('twitter-analyzer', () => {
 
 		it('should initialize the count on a new tweet for each hashtag', async () => {
 			await tweetAnalyzer.countHashtags(tweet);
-			await expect(fakeDb.get(`hashtags/${tweet.in_reply_to_status_id_str}`)).to.eventually.deep.equal({
-				'TEST1': 1, 'TEST2': 1
+			await expect(fakeDb.get(`hashtags/${tweet.in_reply_to_status_id_str}/TEST1`)).to.eventually.deep.equal({
+				count: 1
+			});
+			await expect(fakeDb.get(`hashtags/${tweet.in_reply_to_status_id_str}/TEST2`)).to.eventually.deep.equal({
+				count: 1
 			});
 		});
 
 		it('should update counts on hashtags that already exist', async () => {
 			await tweetAnalyzer.countHashtags(tweet);
 			await tweetAnalyzer.countHashtags(secondTweet);
-			await expect(fakeDb.get(`hashtags/${tweet.in_reply_to_status_id_str}`)).to.eventually.deep.equal({
-				'TEST1': 2, 'TEST2': 1
+			await expect(fakeDb.get(`hashtags/${tweet.in_reply_to_status_id_str}/TEST1`)).to.eventually.deep.equal({
+				count: 2
+			});
+			await expect(fakeDb.get(`hashtags/${tweet.in_reply_to_status_id_str}/TEST2`)).to.eventually.deep.equal({
+				count: 1
 			});
 		});
 	});
