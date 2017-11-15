@@ -1,6 +1,4 @@
 from google.cloud.firestore import DocumentReference, Client
-from tweepy.models import Status
-from TwitterWatcher.tools.retry import retry
 
 class Database(object):
 		def __init__(self, project_name: str):
