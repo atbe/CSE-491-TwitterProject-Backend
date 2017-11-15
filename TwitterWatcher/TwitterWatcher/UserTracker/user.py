@@ -16,21 +16,13 @@ class UserStreamListener(StreamListener):
 				Logger.critical(f"\nAPI ERROR: {status_code}")
 
 
-		def on_status(self, status):
+		def on_status(self, status) -> bool:
 				if status._json.get('in_reply_to_status_id_str', None):
-						return self._handle_reply(status)
+						return self._tweet_tracker.insert_reply(status)
 				else:
-						return self._handle_status(status)
+						return self._tweet_tracker.insert_tweet(status)
 
 
 		def on_delete(self, status_id, user_id):
 				# TODO: Actually delete the reply/status and respective data
 				Logger.warning(f"Delete status {status_id} from user {user_id}")
-
-
-		def _handle_status(self, status: Status):
-				return self._tweet_tracker.insert_tweet(status)
-
-
-		def _handle_reply(self, status: Status) -> bool:
-				return self._tweet_tracker.insert_reply(status)
