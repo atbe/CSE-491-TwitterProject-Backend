@@ -1,13 +1,14 @@
 from tweepy import StreamListener, API
 from tweepy.models import Status
-from TwitterWatcher.Database import Database
+
+from TwitterWatcher.tweet_tracker import TweetTracker
 from TwitterWatcher.logger import Logger
+
 
 class UserStreamListener(StreamListener):
 		def __init__(self, api: API, username: str):
 				super().__init__(api=api)
-				self._db = Database(project_name='twittertweettracker')
-				self._username = username
+				self._tweet_tracker = TweetTracker(username)
 				self._tracked_tweets = set()
 
 
@@ -17,7 +18,7 @@ class UserStreamListener(StreamListener):
 
 		def on_status(self, status):
 				if status._json.get('in_reply_to_status_id_str', None):
-						self._handle_reply(status)
+						return self._handle_reply(status)
 				else:
 						return self._handle_status(status)
 
@@ -28,25 +29,8 @@ class UserStreamListener(StreamListener):
 
 
 		def _handle_status(self, status: Status):
-				if status.user.screen_name != self._username:
-						return True
-				try:
-						Logger.info(f"Inserting tweet {status.id}")
-						self._db.insert_tweet(status)
-						self._tracked_tweets.add(status.id)
-				except Exception as e:
-						Logger.error(f"Could not insert tweet with id {status.id_str}")
-						Logger.exception(e)
-				return True
+				return self._tweet_tracker.insert_tweet(status)
 
 
 		def _handle_reply(self, status: Status) -> bool:
-				if status.in_reply_to_status_id_str not in self._tracked_tweets:
-						return True
-				try:
-						Logger.info(f"Inserting reply {status.id}")
-						self._db.insert_reply(status)
-				except Exception as e:
-						Logger.error(f"Could not insert reply with id {status.id_str}")
-						Logger.exception(e)
-						return True
+				return self._tweet_tracker.insert_reply(status)
