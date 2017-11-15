@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as sentiment from './sentiment';
-import { Tweet } from './models/tweet';
+import { Tweet } from './models/twitter/tweet';
 import * as tweetAnalyzer from './tweet-analyzer';
 
 export const analyzeSentiment = functions.firestore
