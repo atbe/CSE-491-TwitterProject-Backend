@@ -70,7 +70,10 @@ describe('twitter-analyzer', () => {
             await tweetAnalyzer.updateSentiment(tweet);
             await expect(fakeDb.get(`sentiment/${tweet.in_reply_to_status_id_str}`)).to.eventually.deep.equal({
                 score: 1,
-                count: 1
+                count: 1,
+	            negativeCount: 0,
+	            positiveCount: 1,
+	            neutralCount: 0
             });
         });
         it('should increment the score and count for existing tweets', async () => {
@@ -78,7 +81,10 @@ describe('twitter-analyzer', () => {
             await tweetAnalyzer.updateSentiment(secondTweet);
             await expect(fakeDb.get(`sentiment/${tweet.in_reply_to_status_id_str}`)).to.eventually.deep.equal({
                 score: 2,
-                count: 2
+                count: 2,
+	            negativeCount: 0,
+	            positiveCount: 2,
+	            neutralCount: 0
             });
         });
     });

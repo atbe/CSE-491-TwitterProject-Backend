@@ -16,8 +16,18 @@ export async function updateSentiment(tweet: Tweet): Promise<void> {
         if (tweetSentiment) {
             tweetSentiment.score += replySentiment.score;
             tweetSentiment.count += 1;
+            if (replySentiment.score < 0) {
+            	tweetSentiment.negativeCount +=1;
+            } else if (replySentiment.score > 0) {
+            	tweetSentiment.positiveCount += 1;
+            } else {
+            	tweetSentiment.neutralCount += 1;
+            }
         } else {
             tweetSentiment = {
+            	negativeCount: replySentiment.score < 0 ? 1 : 0,
+	            positiveCount: replySentiment.score > 0 ? 1 : 0,
+	            neutralCount: replySentiment.score === 0 ? 1 : 0,
                 count: 1,
                 score: replySentiment.score
             };
