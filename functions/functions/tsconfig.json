@@ -5,12 +5,11 @@
     "noImplicitAny": false,
     "outDir": "./dist",
     "sourceMap": true,
-    "target": "es6",
-    "allowJs": true
+    "target": "es6"
   },
   "include": [
     "src/**.ts",
-    "src/spec/**.spec.ts"
+    "spec/**.spec.ts"
   ],
   "exclude": [
     "node_modules"

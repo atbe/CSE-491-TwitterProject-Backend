@@ -9,7 +9,7 @@ nock.disableNetConnect();
 
 // Use a fake database.
 import * as fakeDb from './fake-db';
-fakeDb.init('../db');
+fakeDb.init('../src/db');
 
 // Use a fake Language API.
 import * as fakeLanguage from './fake-language';
@@ -28,8 +28,8 @@ import * as fakeadmin from './fake-admin';
 fakeadmin.init();
 
 // Ready to go!
-import * as tweetAnalyzer from '../tweet-analyzer';
-import { Entities, Tweet } from "../models/twitter/tweet";
+import * as tweetAnalyzer from '../src/tweet-analyzer';
+import { Entities, Tweet } from "../src/models/twitter/tweet";
 
 // Some test input data that we'll use in multiple tests.
 const tweet: Tweet = {
