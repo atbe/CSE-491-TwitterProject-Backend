@@ -15,8 +15,8 @@ class TweetTracker():
 
 		@retry(5)
 		def insert_reply(self, status: Status):
-				# if status._json.get('in_reply_to_status_id', None) not in self._tracked_tweets:
-				# 		return True
+				if status._json.get('in_reply_to_status_id', None) not in self._tracked_tweets:
+						return True
 				try:
 						Logger.info(f"Inserting reply {status._json['id']}")
 						self._db.set(f"replies/{status._json['id']}", Preprocessing.compress_status(status)._json)
