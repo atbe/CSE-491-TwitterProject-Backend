@@ -36,6 +36,16 @@ export async function transaction(path: string, callback): Promise<any> {
     return Promise.resolve();
 }
 
+export async function fieldTransaction(collection: string, path: string, field: string, callback): Promise<any> {
+	const key = `${collection}/${path}/${field}`;
+	if (_values[key]) {
+		_values[key] = await callback(_values[key]);
+	} else {
+		_values[key] = await callback(null);
+	}
+	return Promise.resolve();
+}
+
 export function values() {
     return _values;
 }
