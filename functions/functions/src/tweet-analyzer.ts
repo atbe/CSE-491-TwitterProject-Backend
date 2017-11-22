@@ -37,7 +37,7 @@ export async function updateSentiment(tweet: Tweet): Promise<void> {
 
 export async function countHashtags(tweet: Tweet): Promise<void> {
 	for (const hashtag of tweet.entities.hashtags) {
-		const path = `hashtags/${tweet.in_reply_to_status_id_str}/${tweet.in_reply_to_status_id_str}/${hashtag.text}`;
+		const path = `hashtags/${tweet.in_reply_to_status_id_str}/${tweet.in_reply_to_status_id_str}/${hashtag.text.toLowerCase()}`;
 		await db.transaction(path, (count: HashtagCounter): Promise<HashtagCounter> => {
 			if (count) {
 				count.count += 1
