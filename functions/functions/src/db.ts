@@ -51,7 +51,6 @@ export async function transaction(path: string, callback): Promise<any> {
 export async function fieldTransaction(collection: string, path: string, field: string, callback): Promise<any> {
 	const db = new admin.firestore.Firestore();
 	return db.runTransaction(async (tran: any) => {
-		console.log(`Working on ${field}`);
 		const ref = db.collection(collection).doc(path);
 		const doc = await ref.get();
 		const data = doc.exists ? doc.get(field) : null;

@@ -2,6 +2,7 @@ import { TweetSentiment } from './models/sentiment';
 import * as db from './db';
 import { Hashtag, Tweet } from "./models/twitter/tweet";
 import * as sentiment from "./sentiment";
+import { HashtagCounter } from './models/hashtagCounter';
 
 export async function updateSentiment(tweet: Tweet): Promise<void> {
     const replySentiment = await sentiment.getSentiment({
@@ -36,12 +37,12 @@ export async function updateSentiment(tweet: Tweet): Promise<void> {
 
 export async function countHashtags(tweet: Tweet): Promise<void> {
 	for (const hashtag of tweet.entities.hashtags) {
-		const path = `${tweet.in_reply_to_status_id_str}`;
-		await db.fieldTransaction('hashtags', path, hashtag.text, (count: number): Promise<number> => {
+		const path = `hashtags/${tweet.in_reply_to_status_id_str}/${tweet.in_reply_to_status_id_str}/${hashtag.text}`;
+		await db.transaction(path, (count: HashtagCounter): Promise<HashtagCounter> => {
 			if (count) {
-				count += 1;
+				count.count += 1
 			} else {
-				count = 1;
+				count = { count: 1 };
 			}
 			return Promise.resolve(count);
 		});
