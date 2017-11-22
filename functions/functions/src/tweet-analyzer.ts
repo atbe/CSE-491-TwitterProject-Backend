@@ -42,7 +42,7 @@ export async function countHashtags(tweet: Tweet): Promise<void> {
 			if (count) {
 				count.count += 1
 			} else {
-				count = { count: 1 };
+				count = { count: 1 , text: hashtag.text.toLowerCase() };
 			}
 			return Promise.resolve(count);
 		});
