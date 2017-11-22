@@ -7,7 +7,7 @@ export const analyzeSentiment = functions.firestore
 	.onCreate(async (event) => {
 		const reply: Tweet = event.data.data();
 
-		tweetAnalyzer.updateSentiment(reply);
+		await tweetAnalyzer.updateSentiment(reply);
 	});
 
 export const countHashtags = functions.firestore
@@ -15,5 +15,17 @@ export const countHashtags = functions.firestore
 	.onCreate(async (event) => {
 		const reply: Tweet = event.data.data();
 
-		tweetAnalyzer.countHashtags(reply);
+		await tweetAnalyzer.countHashtags(reply);
 	});
+
+// export const countHashtagsTEST = functions.https.onRequest(async (req, res) => {
+// 	const tweet: Tweet = req.body;
+// 	try {
+// 		await tweetAnalyzer.countHashtags(tweet);
+// 	} catch (err) {
+// 		console.error(err);
+// 		res.sendStatus(500);
+// 		return;
+// 	}
+// 	res.sendStatus(200);
+// });
