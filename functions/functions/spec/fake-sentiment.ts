@@ -9,5 +9,5 @@ const fakeSentiment = {
 };
 
 export function init() {
-  mock('../sentiment', fakeSentiment);
+  mock('../src/sentiment', fakeSentiment);
 }

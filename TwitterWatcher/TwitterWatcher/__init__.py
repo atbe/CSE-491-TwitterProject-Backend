@@ -5,3 +5,4 @@ __license__ = 'MIT'
 from TwitterWatcher.TwitterClient import *
 from TwitterWatcher.UserTracker import *
 from TwitterWatcher.Database import *
+from TwitterWatcher.tools import *

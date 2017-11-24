@@ -16,7 +16,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as firebase from "firebase";
-import Transaction = firebase.firestore.Transaction;
 admin.initializeApp(functions.config().firebase);
 
 export function get(path: string): Promise<any | null> {
@@ -34,11 +33,11 @@ export function remove(path: string): Promise<any> {
 }
 
 export async function transaction(path: string, callback): Promise<any> {
-    const db = new admin.firestore.Firestore();
-    const ref = db.doc(path);
-    const doc = await ref.get();
-    const data = doc.exists ? doc.data() : null;
+	const db = new admin.firestore.Firestore();
     return db.runTransaction(async (tran: any) => {
+	    const ref = db.doc(path);
+	    const doc = await ref.get();
+	    const data = doc.exists ? doc.data() : null;
         const newData = await callback(data);
         if (data) {
             tran.update(ref, newData);
@@ -47,4 +46,20 @@ export async function transaction(path: string, callback): Promise<any> {
         }
         Promise.resolve();
     });
+}
+
+export async function fieldTransaction(collection: string, path: string, field: string, callback): Promise<any> {
+	const db = new admin.firestore.Firestore();
+	return db.runTransaction(async (tran: any) => {
+		const ref = db.collection(collection).doc(path);
+		const doc = await ref.get();
+		const data = doc.exists ? doc.get(field) : null;
+		const newData = await callback(data);
+		if (doc.exists) {
+			tran.update(ref, {[field]: newData});
+		} else {
+			tran.set(ref, {[field]: newData});
+		}
+		Promise.resolve();
+	});
 }
