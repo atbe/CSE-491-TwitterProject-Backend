@@ -8,7 +8,7 @@ from TwitterWatcher.tools.retry import retry
 class TweetTracker():
 
 		def __init__(self, username: str):
-				self._db = Database(project_name='twittertweettracker')
+				self._db = Database(project_name='twittertweettracker-ba5f2')
 				self._tracked_tweets = set()
 				self._username: str = username
 
