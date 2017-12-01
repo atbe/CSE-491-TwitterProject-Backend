@@ -1,5 +1,6 @@
 from tweepy import StreamListener, API
 from tweepy.models import Status
+from threading import Thread
 
 from TwitterWatcher.tweet_tracker import TweetTracker
 from TwitterWatcher.logger import Logger
@@ -18,7 +19,8 @@ class UserStreamListener(StreamListener):
 
 		def on_status(self, status) -> bool:
 				if status._json.get('in_reply_to_status_id_str', None):
-						return self._tweet_tracker.insert_reply(status)
+						thread = Thread(target=self._tweet_tracker.insert_reply, args=(status,))
+						thread.start()
 				else:
 						return self._tweet_tracker.insert_tweet(status)
 
