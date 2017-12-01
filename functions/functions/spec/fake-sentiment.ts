@@ -3,7 +3,8 @@ import * as mock from 'mock-require';
 const fakeSentiment = {
     getSentiment(document): any {
         return {
-            score: 1
+            score: 1,
+	        comparative: 1
         }
     }
 };

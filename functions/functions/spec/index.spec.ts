@@ -30,6 +30,7 @@ fakeadmin.init();
 // Ready to go!
 import * as tweetAnalyzer from '../src/tweet-analyzer';
 import { Entities, Hashtag, Tweet } from "../src/models/twitter/tweet";
+import { getSentiment } from '../src/sentiment';
 
 // Some test input data that we'll use in multiple tests.
 const tweet: Tweet = {
@@ -109,6 +110,12 @@ describe('twitter-analyzer', () => {
 				.to.eventually.deep.equal({count: 2, text: 'test1'});
 			await expect(fakeDb.get(`hashtags/${tweet.in_reply_to_status_id_str}/${tweet.in_reply_to_status_id_str}/test2`))
 				.to.eventually.deep.equal({count: 1, text: 'test2'});
+		});
+	});
+
+	describe('sentiment', () => {
+		it('tests', async () => {
+			console.log(getSentiment('What the fuck is wrong with you? I am mad. I kill fucker!'));
 		});
 	});
 });

@@ -1,19 +1,15 @@
-import { TweetSentiment } from './models/sentiment';
 import * as db from './db';
 import { Hashtag, Tweet } from "./models/twitter/tweet";
 import * as sentiment from "./sentiment";
-import { HashtagCounter } from './models/hashtagCounter';
+import { HashtagCounter } from "./models/hashtagCounter";
+import { TweetSentiment } from "./models/sentiment";
 
 export async function updateSentiment(tweet: Tweet): Promise<void> {
-    const replySentiment = await sentiment.getSentiment({
-        content: tweet.text as string,
-        type: 'PLAIN_TEXT'
-    });
-
+	const replySentiment = await sentiment.getSentiment(tweet.text as string);
     const path = `sentiment/${tweet.in_reply_to_status_id_str}`;
     return db.transaction(path,async (tweetSentiment: TweetSentiment | null): Promise<TweetSentiment> => {
         if (tweetSentiment) {
-            tweetSentiment.score += replySentiment.score;
+            tweetSentiment.score += replySentiment.comparative;
             tweetSentiment.count += 1;
             if (replySentiment.score < 0) {
             	tweetSentiment.negativeCount +=1;
@@ -28,7 +24,7 @@ export async function updateSentiment(tweet: Tweet): Promise<void> {
 	            positiveCount: replySentiment.score > 0 ? 1 : 0,
 	            neutralCount: replySentiment.score === 0 ? 1 : 0,
                 count: 1,
-                score: replySentiment.score
+                score: replySentiment.comparative
             };
         }
         return Promise.resolve(tweetSentiment);
