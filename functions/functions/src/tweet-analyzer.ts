@@ -48,9 +48,11 @@ export async function countHashtags(tweet: Tweet): Promise<void> {
 }
 
 export async function countWords(tweet: Tweet): Promise<void> {
-	for (const word of Stopword.removeStopwords(tweet.text.match(/[A-Za-z0-9_]+/g))) {
+	const words = tweet.text.replace(/@\S+/, '').replace(/#\S+/, '');
+	for (const word of Stopword.removeStopwords(words.match(/[A-Za-z0-9_]+/g))) {
 		const path = `words/${tweet.in_reply_to_status_id_str}/${tweet.in_reply_to_status_id_str}/${word.toLowerCase()}`;
 		await db.transaction(path, (count: StringCounter): Promise<StringCounter> => {
+			console.log(word);
 			if (count) {
 				count.count += 1
 			} else {

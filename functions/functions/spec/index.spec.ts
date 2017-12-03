@@ -36,7 +36,7 @@ import { getSentiment } from '../src/sentiment';
 const tweet: Tweet = {
     id: 1,
     id_str: '1',
-    text: 'I miss you so much.',
+    text: 'I miss you so much #love @trump.',
     in_reply_to_status_id_str: 'original_tweet',
 	entities: {
     	hashtags: [
