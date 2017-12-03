@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import { Tweet } from './models/twitter/tweet';
 import * as tweetAnalyzer from './tweet-analyzer';
 
-export const analyzeSentiment = functions.firestore
+export const analyzeReplySentiment = functions.firestore
 	.document('replies/{replyId}')
 	.onCreate(async (event) => {
 		const reply: Tweet = event.data.data();
@@ -10,12 +10,20 @@ export const analyzeSentiment = functions.firestore
 		await tweetAnalyzer.updateSentiment(reply);
 	});
 
-export const countHashtags = functions.firestore
+export const CountHashtagsInReply = functions.firestore
 	.document('replies/{replyId}')
 	.onCreate(async (event) => {
 		const reply: Tweet = event.data.data();
 
 		await tweetAnalyzer.countHashtags(reply);
+	});
+
+export const CountWordsInReply = functions.firestore
+	.document('replies/{replyId}')
+	.onCreate(async (event) => {
+		const reply: Tweet = event.data.data();
+
+		await tweetAnalyzer.countWords(reply);
 	});
 
 // export const countHashtagsTEST = functions.https.onRequest(async (req, res) => { // 	const tweet: Tweet = req.body;

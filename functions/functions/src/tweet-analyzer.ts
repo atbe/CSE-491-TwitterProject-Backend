@@ -1,8 +1,9 @@
 import * as db from './db';
 import { Hashtag, Tweet } from "./models/twitter/tweet";
 import * as sentiment from "./sentiment";
-import { HashtagCounter } from "./models/hashtagCounter";
+import { StringCounter } from "./models/stringCounter";
 import { TweetSentiment } from "./models/sentiment";
+const Stopword = require('stopword');
 
 export async function updateSentiment(tweet: Tweet): Promise<void> {
 	const replySentiment = await sentiment.getSentiment(tweet.text as string);
@@ -34,11 +35,26 @@ export async function updateSentiment(tweet: Tweet): Promise<void> {
 export async function countHashtags(tweet: Tweet): Promise<void> {
 	for (const hashtag of tweet.entities.hashtags) {
 		const path = `hashtags/${tweet.in_reply_to_status_id_str}/${tweet.in_reply_to_status_id_str}/${hashtag.text.toLowerCase()}`;
-		await db.transaction(path, (count: HashtagCounter): Promise<HashtagCounter> => {
+		await db.transaction(path, (count: StringCounter): Promise<StringCounter> => {
 			if (count) {
 				count.count += 1
 			} else {
 				count = { count: 1 , text: hashtag.text.toLowerCase() };
+			}
+			return Promise.resolve(count);
+		});
+	}
+	return Promise.resolve();
+}
+
+export async function countWords(tweet: Tweet): Promise<void> {
+	for (const word of Stopword.removeStopwords(tweet.text.match(/[A-Za-z0-9_]+/g))) {
+		const path = `words/${tweet.in_reply_to_status_id_str}/${tweet.in_reply_to_status_id_str}/${word.toLowerCase()}`;
+		await db.transaction(path, (count: StringCounter): Promise<StringCounter> => {
+			if (count) {
+				count.count += 1
+			} else {
+				count = { count: 1 , text: word.toLowerCase() };
 			}
 			return Promise.resolve(count);
 		});

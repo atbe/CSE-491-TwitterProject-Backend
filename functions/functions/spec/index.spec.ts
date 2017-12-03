@@ -113,9 +113,18 @@ describe('twitter-analyzer', () => {
 		});
 	});
 
-	describe('sentiment', () => {
-		it('tests', async () => {
-			console.log(getSentiment('What the fuck is wrong with you? I am mad. I kill fucker!'));
+	describe('countWords', () => {
+		beforeEach(async () => {
+			fakeDb.reset();
+		});
+
+		it('should count all of the words', async () => {
+			await tweetAnalyzer.countWords(tweet);
+			const expected = ['miss', 'so'];
+			for (const expectedValue of expected) {
+				await expect(fakeDb.get(`words/${tweet.in_reply_to_status_id_str}/${tweet.in_reply_to_status_id_str}/${expectedValue}`))
+					.to.eventually.deep.equal({count: 1, text: expectedValue});
+			}
 		});
 	});
 });
