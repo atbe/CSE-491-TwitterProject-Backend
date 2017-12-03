@@ -1,9 +1,8 @@
 import * as db from './db';
-import { Hashtag, Tweet } from "./models/twitter/tweet";
+import { Tweet } from "./models/twitter/tweet";
 import * as sentiment from "./sentiment";
 import { StringCounter } from "./models/stringCounter";
 import { TweetSentiment } from "./models/sentiment";
-const Stopword = require('stopword');
 const KeywordExtractor = require('keyword-extractor');
 
 export async function updateSentiment(tweet: Tweet): Promise<void> {
