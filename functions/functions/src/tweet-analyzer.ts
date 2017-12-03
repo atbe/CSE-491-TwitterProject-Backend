@@ -4,6 +4,7 @@ import * as sentiment from "./sentiment";
 import { StringCounter } from "./models/stringCounter";
 import { TweetSentiment } from "./models/sentiment";
 const Stopword = require('stopword');
+const KeywordExtractor = require('keyword-extractor');
 
 export async function updateSentiment(tweet: Tweet): Promise<void> {
 	const replySentiment = await sentiment.getSentiment(tweet.text as string);
@@ -48,11 +49,9 @@ export async function countHashtags(tweet: Tweet): Promise<void> {
 }
 
 export async function countWords(tweet: Tweet): Promise<void> {
-	const words = tweet.text.replace(/@\S+/, '').replace(/#\S+/, '');
-	for (const word of Stopword.removeStopwords(words.match(/[A-Za-z0-9_]+/g))) {
+	for (const word of extractWords(tweet)) {
 		const path = `words/${tweet.in_reply_to_status_id_str}/${tweet.in_reply_to_status_id_str}/${word.toLowerCase()}`;
 		await db.transaction(path, (count: StringCounter): Promise<StringCounter> => {
-			console.log(word);
 			if (count) {
 				count.count += 1
 			} else {
@@ -62,4 +61,25 @@ export async function countWords(tweet: Tweet): Promise<void> {
 		});
 	}
 	return Promise.resolve();
+}
+
+export function extractWords(tweet: Tweet): string[] {
+	const toRemoveIndices = [];
+	if (tweet.entities.hashtags) {
+		tweet.entities.hashtags.map(hashtag => toRemoveIndices.push(hashtag['indices']));
+	}
+	if (tweet.entities.user_mentions) {
+		tweet.entities.user_mentions.map(userMention => toRemoveIndices.push(userMention['indices']));
+	}
+	if (tweet.entities.urls) {
+		tweet.entities.urls.map(url => toRemoveIndices.push(url['indices']));
+	}
+	toRemoveIndices.sort((a: number[], b: number[]) => {
+		return b[0] - a[0];
+	});
+	let text = tweet.text;
+	for (const indices of toRemoveIndices) {
+		text = text.substring(0, indices[0]) + text.substring(indices[1]);
+	}
+	return KeywordExtractor.extract(text).filter((word: string) => /^[a-zA-Z]*$/.test(word));
 }

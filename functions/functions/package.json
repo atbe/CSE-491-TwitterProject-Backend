@@ -6,8 +6,8 @@
     "firebase": "^4.6.1",
     "firebase-admin": "~5.4.0",
     "firebase-functions": "^0.7.2",
+    "keyword-extractor": "0.0.14",
     "sentiment": "^4.1.0",
-    "stopword": "^0.1.9",
     "typings": "^2.1.1"
   },
   "private": true,
